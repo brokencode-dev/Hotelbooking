@@ -13,7 +13,7 @@ int Roomrand() {
 	return roomamount;
 }
 
-int room::getroomprice() {
+int getroomprice() {
 
 	int price = rand() % 21 + 80;
 	return price;
@@ -22,6 +22,13 @@ int room::getroomprice() {
 int getbookingnum() {
 	int bookingnum = rand() % 90000 + 10000;
 	return bookingnum;
+}
+
+void reset_prices(vector<room>& Rooms, int amount) {
+
+	for (int i = 0; i < amount; ++i) {
+		Rooms[i].price = getroomprice();
+	}
 }
 
 bool availability(vector<room> Rooms, int Room) {
@@ -33,6 +40,26 @@ bool availability(vector<room> Rooms, int Room) {
 		return true;
 	}
 }
+
+
+void show_room_info(vector<room> Rooms, int amount) {
+
+	cout << "Roomnumber: " << Rooms[amount].roomnum << "\n";
+	cout << "Booked by: " << Rooms[amount].guestname << "\n";
+	cout << "Bookingnumber: " << Rooms[amount].bookingnum << "\n";
+	cout << "current price: " << Rooms[amount].price << "$ for one night\n";
+	cout << "Total price: " << Rooms[amount].bookingprice << "$\n";
+	cout << "Booked for: " << Rooms[amount].duration << " nights\n";
+}
+
+void delete_booking(vector<room>& Rooms, int amount) {
+	Rooms[amount].guestname.clear();
+	Rooms[amount].price = getroomprice();
+	Rooms[amount].bookingprice = 0;
+	Rooms[amount].bookingnum = 0;
+	Rooms[amount].duration = 0;
+}
+
 
 int available_rooms_count(vector<room> Rooms, int amount) {
 
@@ -74,6 +101,7 @@ void savefile(vector<room> Rooms, int amount) {
 			file << Rooms[i].guestname << "\n";
 			file << Rooms[i].bookingnum << "\n";
 			file << Rooms[i].price << "\n";
+			file << Rooms[i].bookingprice << "\n";
 			file << Rooms[i].duration << "\n";
 		}
 		file.close();
@@ -111,6 +139,10 @@ void loadfile(vector<room> &Rooms, int &amount) {
 			(getline(infile, line));
 			conversion = stoi(line);
 			Rooms[i].price = conversion;
+
+			(getline(infile, line));
+			conversion = stoi(line);
+			Rooms[i].bookingprice = conversion;
 
 			(getline(infile, line));
 			conversion = stoi(line);
@@ -155,6 +187,316 @@ void check_available_rooms(vector<room> Rooms, int amount) {
 	this_thread::sleep_for(chrono::milliseconds(500));
 }
 
+void check_booked_rooms(vector<room> Rooms, int amount) {
+	cout << "**************************************\n";
+	cout << "             BOOKED ROOMS           \n\n";
+
+	for (int i = 0; i < amount; ++i) {
+
+		bool available = availability(Rooms, i);
+		if (available == false) {
+
+			cout << "*Roomnro: " << Rooms[i].roomnum <<
+				" _ Price for one night: " << Rooms[i].price << "$\n";
+
+			this_thread::sleep_for(chrono::milliseconds(30));
+		}
+	}
+	cout << "\n**************************************\n\n";
+}
+
+
+void search_by_number(vector<room>& Rooms, int amount) {
+
+	char input = '\0';
+
+	do {
+		char quit;
+		int numsearch;
+		string search;
+		vector<int> searchresult;
+
+		check_booked_rooms(Rooms, amount);
+
+		cout << "\nSearch by number: ";
+		cin >> search;
+
+		for (int i = 0; i < amount; ++i) {
+
+			if (to_string(Rooms[i].bookingnum).find(search) != string::npos) {
+
+				searchresult.push_back(i);
+			}
+		}
+
+		int size = searchresult.size();
+
+		system("cls");
+		cout << "The search resulted in: " << size << " matches\n";
+
+		if (size < 1) {
+			cout << "Try again\n" << "Press 'n' to exit!";
+
+			cin >> input;
+
+			if (input == 'n' || input == 'N') {
+				system("cls");
+				cout << "Closing search..\n\n";
+				this_thread::sleep_for(chrono::milliseconds(500));
+			}
+
+			else {
+				cin.clear();
+				cin.ignore(INT_MAX, '\n');
+				system("cls");
+			}
+
+		}
+
+		else {
+
+			for (int i = 0; i < size; ++i) {
+
+				int result = searchresult[i];
+
+				cout << "Room number: " << result + 1 << "\n";
+			}
+
+			cout << "\nPick one of the results to see reservation info: \n";
+			cin >> numsearch;
+
+			if (cin.fail() || numsearch > amount || numsearch < 1) {
+
+				cin.clear();
+				cin.ignore(INT_MAX, '\n');
+				system("cls");
+				cout << "Invalid input! Use an integer between 1 - " << amount << " !\n\n";
+				continue;
+			}
+			system("cls");
+			show_room_info(Rooms, numsearch - 1);
+
+			cout << "\nDo you want to delete the booking?\n";
+			cout << "(y/n): ";
+
+			cin >> input;
+
+			if (input == 'y' || input == 'Y') {
+				delete_booking(Rooms, numsearch - 1);
+
+				system("cls");
+				cout << "\nBooking deleted\n";
+
+
+				cout << "Would you like to search by name again?\n";
+				cout << "(y/n): ";
+
+				if (input == 'y' || input == 'Y') {
+					system("cls");
+				}
+				else if (input == 'n' || input == 'N') {
+					system("cls");
+					cout << "Quitting to search menu..\n\n";
+					this_thread::sleep_for(chrono::milliseconds(500));
+				}
+				else {
+					cin.clear();
+					cin.ignore(INT_MAX, '\n');
+					system("cls");
+					cout << "Faulty input! use Y,y or N,n.\n\n";
+				}
+			}
+			else if (input == 'n' || input == 'N') {
+				system("cls");
+				cout << "Quitting to main menu..\n\n";
+				this_thread::sleep_for(chrono::milliseconds(500));
+			}
+			else {
+				cin.clear();
+				cin.ignore(INT_MAX, '\n');
+				system("cls");
+				cout << "Faulty input! use Y,y or N,n.\n\n";
+			}
+		}
+	} while (input != 'n' && input != 'N');
+}
+
+void search_by_name(vector<room>& Rooms, int amount) {
+
+	char input = '\0';
+
+	do {
+		char quit;
+		int numsearch;
+		string search;
+		vector<int> searchresult;
+
+		check_booked_rooms(Rooms, amount);
+
+		cout << "\nSearch by name: ";
+
+		cin.ignore();
+		getline(cin, search);
+
+		for (int i = 0; i < amount; ++i) {
+
+			if (Rooms[i].guestname.find(search) != string::npos) {
+
+				searchresult.push_back(i);
+			}
+		}
+
+		int size = searchresult.size();
+
+		system("cls");
+		cout << "The search resulted in: " << size << " matches\n";
+
+		if (size < 1) {
+			cout << "Try again\n" << "Press 'n' to exit!";
+
+			cin >> input;
+
+			if (input == 'n' || input == 'N') {
+				system("cls");
+				cout << "Closing search..\n\n";
+				this_thread::sleep_for(chrono::milliseconds(500));
+			}
+
+			else { 
+				cin.clear();
+				cin.ignore(INT_MAX, '\n');
+				system("cls");
+			}
+
+		}
+
+		else {
+
+			for (int i = 0; i < size; ++i) {
+
+				int result = searchresult[i];
+
+				cout << "Room number: " << result + 1 << "\n";
+			}
+
+			cout << "\nPick one of the results to see reservation info: \n";
+			cin >> numsearch;
+
+			if (cin.fail() || numsearch > amount || numsearch < 1) {
+
+				cin.clear();
+				cin.ignore(INT_MAX, '\n');
+				system("cls");
+				cout << "Invalid input! Use an integer between 1 - " << amount << " !\n\n";
+				continue;
+			}
+			system("cls");
+			show_room_info(Rooms, numsearch - 1);
+
+			cout << "\nDo you want to delete the booking?\n";
+			cout << "(y/n): ";
+
+			cin >> input;
+
+			if (input == 'y' || input == 'Y') {
+				delete_booking(Rooms, numsearch - 1);
+
+				system("cls");
+				cout << "\nBooking deleted\n";
+				
+
+				cout << "Would you like to search by name again?\n";
+				cout << "(y/n): ";
+
+				if (input == 'y' || input == 'Y') {
+					system("cls");
+				}
+				else if (input == 'n' || input == 'N') {
+					system("cls");
+					cout << "Quitting to search menu..\n\n";
+					this_thread::sleep_for(chrono::milliseconds(500));
+				}
+				else {
+					cin.clear();
+					cin.ignore(INT_MAX, '\n');
+					system("cls");
+					cout << "Faulty input! use Y,y or N,n.\n\n";
+				}
+			}
+			else if (input == 'n' || input == 'N') {
+				system("cls");
+				cout << "Quitting to main menu..\n\n";
+				this_thread::sleep_for(chrono::milliseconds(500));
+			}
+			else {
+				cin.clear();
+				cin.ignore(INT_MAX, '\n');
+				system("cls");
+				cout << "Faulty input! use Y,y or N,n.\n\n";
+			}
+		}
+	} while (input != 'n' && input != 'N');
+}
+
+
+void booking_search(vector<room>& Rooms, int amount) {
+
+	int input;
+
+	do {
+
+		cout << "**************************************\n";
+		cout << "            BOOKING SEARCH            \n\n";
+		cout << "1. Search by name\n";
+		cout << "2. Search by bookingnumber\n";
+		cout << "3. Exit to main menu\n\n";
+		cout << "**************************************\n\n";
+		cout << "Enter your choice: ";
+		cin >> input;
+
+		if (cin.fail()) {
+
+			cin.clear();
+			cin.ignore(INT_MAX, '\n');
+			system("cls");
+			cout << "Invalid input! Choose an integer from 1 to 3!\n\n";
+			this_thread::sleep_for(chrono::milliseconds(500));
+		}
+
+		else {
+
+			switch (input) {
+
+			case 1:
+
+				system("cls");
+				search_by_name(Rooms, amount);
+
+				break;
+
+			case 2:
+
+				system("cls");
+				search_by_number(Rooms, amount);
+
+				break;
+
+			case 3:
+
+				system("cls");
+				cout << "Exiting to main menu..\n";
+				this_thread::sleep_for(chrono::milliseconds(500));
+				break;
+
+			default:
+
+				system("cls");
+				cout << "Invalid input! Choose an integer from 1 to 3!\n\n";
+			}
+
+		}
+	} while (input != 3);
+}
 
 void room_booking(vector<room>& Rooms, int amount) {
 
@@ -268,12 +610,14 @@ void room_booking(vector<room>& Rooms, int amount) {
 
 			Rooms[roomnum - 1].guestname = name;
 			Rooms[roomnum - 1].bookingnum = bookingnumber;
-			Rooms[roomnum - 1].price = total;
+			Rooms[roomnum - 1].bookingprice = total;
 			Rooms[roomnum - 1].duration = nights;
+
+			reset_prices(Rooms, amount);
 
 			cout << "\nThank you for your booking.\n\n" <<
 				"Would you like to make another booking?\n" <<
-				"(y/n)";
+				"(y/n): ";
 			cin >> input;
 
 			if (input == 'y' || input == 'Y') {
