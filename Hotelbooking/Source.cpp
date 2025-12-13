@@ -10,7 +10,6 @@ using namespace std;
 
 void check_available_rooms(vector<room> Rooms, int amount) {
 
-	string input;
 
 	do {
 		cout << "**************************************\n";
