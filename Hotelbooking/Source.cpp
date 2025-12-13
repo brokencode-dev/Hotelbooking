@@ -2,10 +2,42 @@
 #include <iostream>
 #include "Header.h"
 #include <vector>
+#include <string>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
+void check_available_rooms(vector<room> Rooms, int amount) {
 
+	string input;
+
+	do {
+		cout << "**************************************\n";
+		cout << "           AVAILABLE ROOMS           \n\n";
+
+		for (int i = 0; i < amount; ++i) {
+
+			bool available = availability(Rooms, i);
+			if (available == true) {
+
+				cout << "*Roomnro: " << Rooms[i].roomnum << 
+					" _ Price for one night: " << Rooms[i].price << "$\n";
+
+				this_thread::sleep_for(chrono::milliseconds(30));
+			}
+		}
+		cout << "\n**************************************\n\n";
+
+		system("pause");
+		break;
+
+	} while (true);
+
+	system("cls");
+	cout << "Quitting to main menu..\n\n";
+	this_thread::sleep_for(chrono::milliseconds(500));
+}
 
 int main() {
 	srand(time(NULL));
@@ -37,6 +69,7 @@ int main() {
 			cin.ignore(INT_MAX, '\n');
 			system("cls");
 			cout << "Invalid input! Choose an integer from 1 to 6!\n\n";
+			this_thread::sleep_for(chrono::milliseconds(500));
 		}
 
 		else {
@@ -67,6 +100,9 @@ int main() {
 				break;
 
 			case 4:
+
+				system("cls");
+				check_available_rooms(rooms, room_numbers);
 
 				break;
 

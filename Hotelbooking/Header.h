@@ -15,9 +15,11 @@ public:
 	int price;
 	int duration;
 
+	int getroomprice();
+
 	room(int Roomnum) {
 		roomnum = Roomnum;
-		price = price_per_night;
+		price = getroomprice();
 		bookingnum = 0;
 		duration = 0;
 	}
@@ -32,9 +34,9 @@ void loadfile(vector<room>& Rooms, int& amount);
 bool availability(vector<room> Rooms, int Room);
 int available_rooms_count(vector<room> Rooms, int amount);
 
-int getroomprice();
 int getbookingnum();
-
 void room_booking(vector<room> &Rooms, int amount);
+
+void check_available_rooms(vector<room> Rooms, int amount);
 
 

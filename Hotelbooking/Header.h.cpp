@@ -3,6 +3,8 @@
 #include "Header.h"
 #include <fstream>
 #include <string>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 
@@ -11,7 +13,7 @@ int Roomrand() {
 	return roomamount;
 }
 
-int getroomprice() {
+int room::getroomprice() {
 
 	int price = rand() % 21 + 80;
 	return price;
@@ -46,6 +48,7 @@ int available_rooms_count(vector<room> Rooms, int amount) {
 	}
 	return Count;
 }
+
 
 vector<room> createrooms(int amount) {
 
@@ -120,6 +123,39 @@ void loadfile(vector<room> &Rooms, int &amount) {
 	}
 }
 
+
+void check_available_rooms(vector<room> Rooms, int amount) {
+
+	string input;
+
+	do {
+		cout << "**************************************\n";
+		cout << "           AVAILABLE ROOMS           \n\n";
+
+		for (int i = 0; i < amount; ++i) {
+
+			bool available = availability(Rooms, i);
+			if (available == true) {
+
+				cout << "*Roomnro: " << Rooms[i].roomnum <<
+					" _ Price for one night: " << Rooms[i].price << "$\n";
+
+				this_thread::sleep_for(chrono::milliseconds(30));
+			}
+		}
+		cout << "\n**************************************\n\n";
+
+		system("pause");
+		break;
+
+	} while (true);
+
+	system("cls");
+	cout << "Quitting to main menu..\n\n";
+	this_thread::sleep_for(chrono::milliseconds(500));
+}
+
+
 void room_booking(vector<room>& Rooms, int amount) {
 
 	char input = '\0';
@@ -139,9 +175,13 @@ void room_booking(vector<room>& Rooms, int amount) {
 			system("cls");
 			cout << "Every room is booked! Try again another time.\n\n";
 			break;
+			this_thread::sleep_for(chrono::milliseconds(500));
 		}
 
 		do {
+
+			cout << "**************************************\n";
+			cout << "                BOOKING                \n\n";
 
 			cout << "Welcome to our hotel.\n\n" << "We have " << amount <<
 				" rooms in total.\n" << available_rooms << " of them are free at the moment.\n\n" <<
@@ -170,7 +210,7 @@ void room_booking(vector<room>& Rooms, int amount) {
 
 		} while (1);
 
-		price = getroomprice();
+		price = Rooms[roomnum - 1].price;
 
 		cout << "\nYou are staying in room: " << roomnum << "\n" <<
 			"Price for one night is: " << price << "$\n\n" <<
@@ -211,6 +251,9 @@ void room_booking(vector<room>& Rooms, int amount) {
 
 		system("cls");
 
+		cout << "**************************************\n";
+		cout << "           AVAILABLE ROOMS           \n\n";
+
 		cout << "Is the information below correct?\n\n";
 		cout << "Name: " << name << "\n";
 		cout << "Roomnumber: " << roomnum << "\n";
@@ -239,6 +282,7 @@ void room_booking(vector<room>& Rooms, int amount) {
 			else if (input == 'n' || input == 'N') {
 				system("cls");
 				cout << "Quitting to main menu..\n\n";
+				this_thread::sleep_for(chrono::milliseconds(500));
 			}
 			else {
 				cin.clear();
@@ -250,6 +294,7 @@ void room_booking(vector<room>& Rooms, int amount) {
 		else if (input == 'n' || input == 'N') {
 			system("cls");
 			cout << "Quitting to main menu..\n\n";
+			this_thread::sleep_for(chrono::milliseconds(500));
 		}
 		else {
 			cin.clear();
