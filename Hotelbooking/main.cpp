@@ -1,23 +1,27 @@
 //Elias Laitala
 //3p tehtävä.
 #include <iostream>
-#include "Header.h"
+#include "classfunctions.h"
+#include "mainfunctions.h"
 #include <vector>
 #include <chrono>
 #include <thread>
-
 using namespace std;
 
 
 
 int main() {
 	srand(time(NULL));
+	//seeding the random number generator
 
 	int menuchoice;
 	int room_numbers = Roomrand();
+	//declaring variables used
+	//room_numbers = 30-70
 
 	vector<room> rooms =
 		createrooms(room_numbers);
+	//creating the vector of rooms that we'll me modifying in the code
 
 	do {
 
@@ -33,6 +37,7 @@ int main() {
 		cout << "**************************************\n\n";
 		cout << "Enter your choice: ";
 		cin >> menuchoice;
+		//Printed a beautiful menu for the user
 
 		if (cin.fail()) {
 
@@ -41,7 +46,7 @@ int main() {
 			system("cls");
 			cout << "Invalid input! Choose an integer from 1 to 6!\n\n";
 			this_thread::sleep_for(chrono::milliseconds(500));
-		}
+		}//basic input validation
 
 		else {
 
@@ -52,6 +57,7 @@ int main() {
 				system("cls");
 				savefile(rooms, room_numbers);
 				cout << "File saved succesfully!\n\n";
+				//all cases just run one of the predetermined main functions
 
 				break;
 
@@ -80,7 +86,7 @@ int main() {
 			case 5:
 
 				system("cls");
-				booking_search(rooms, room_numbers);
+				booking_search_menu(rooms, room_numbers);
 
 				break;
 
@@ -95,10 +101,11 @@ int main() {
 
 				system("cls");
 				cout << "Invalid input! Choose an integer from 1 to 6!\n\n";
-
+				//default validates the number input as well
 			}
 		}
 	} while (menuchoice != 6);
+	//exit with option 6
 
 	return 0;
 }
