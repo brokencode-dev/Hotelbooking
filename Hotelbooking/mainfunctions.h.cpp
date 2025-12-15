@@ -201,28 +201,28 @@ void room_booking(vector<room>& Rooms, int amount) {
 
 		cout << "\nYour full name for the booking: ";
 
-		//cin ignore ignores the single \n in buffer
-		cin.ignore();
+		//cin.ignore() ignores the single \n in buffer
+		cin.ignore(INT_MAX, '\n');
 		getline(cin, name);
 
 
 		if (name.empty()) {
 			cin.clear();
-			cin.ignore(INT_MAX, '\n');
+			//cin.ignore(INT_MAX, '\n');
 			system("cls");
 			cout << "You can't leave the name section blank !\n\n";
 			continue;
 		}
 		else if (name.length() > Max_Len) {
 			cin.clear();
-			cin.ignore(INT_MAX, '\n');
+			//cin.ignore(INT_MAX, '\n');
 			system("cls");
 			cout << "Name is too long !\n\n";
 			continue;
 		}
 		else if (name.length() < Min_Len) {
 			cin.clear();
-			cin.ignore(INT_MAX, '\n');
+			//cin.ignore(INT_MAX, '\n');
 			system("cls");
 			cout << "Name is too short, type your first and last name !\n\n";
 			continue;

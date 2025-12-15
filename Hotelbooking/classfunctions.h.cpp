@@ -128,7 +128,7 @@ void search_by_number(vector<room>& Rooms, int amount) {
 		//using the previous function to print a list of booked numbers
 		check_booked_rooms(Rooms, amount);
 
-		cout << "\nSearch by number: ";
+		cout << "\nSearch by booking number: ";
 		cin >> search;
 
 		//no feed validation because it's a search, i didn't deem it necessary
@@ -263,7 +263,8 @@ void search_by_number(vector<room>& Rooms, int amount) {
 void search_by_name(vector<room>& Rooms, int amount) {
 
 	char input = '\0';
-
+	cin.ignore(INT_MAX, '\n');
+	
 	do {
 		char quit;
 		int numsearch;
@@ -272,14 +273,12 @@ void search_by_name(vector<room>& Rooms, int amount) {
 
 		check_booked_rooms(Rooms, amount);
 
-		cout << "\nSearch by name: ";
+		cout << "\nSearch by booking name: ";
 
-		cin.ignore();
 		getline(cin, search);
 
 		if (search.empty()) {
 			cin.clear();
-			cin.ignore(INT_MAX, '\n');
 			system("cls");
 			cout << "You can't search by blank !\n\n";
 		}
@@ -329,7 +328,7 @@ void search_by_name(vector<room>& Rooms, int amount) {
 					cout << "Room number: " << result + 1 << "\n";
 				}
 
-				cout << "\nPick one of the results to see reservation info: \n";
+				cout << "\nPick one of the results (Room number) to see reservation info: \n";
 				cin >> numsearch;
 
 				bool result = availability(Rooms, numsearch -1);
